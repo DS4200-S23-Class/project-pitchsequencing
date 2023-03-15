@@ -5,22 +5,37 @@
     <meta charset=utf-8/>
     <link rel="stylesheet" type="text/css" href="style.css">
 
-    <title>TODO: Add short title here</title>
+    <title>DS4200 Pitch Sequencing Project</title>
 </head>
 
 
 <body>
 
-    <h1>TODO: Add project title here</h1>
+    <h1>MLB Pitch Sequencing Analysis</h1>
 
     <div>
         <h2>Motivation</h2>
-        TODO: Add motivation / use case here 
+       <p>While baseball may not be as popular as other sports right now, it is definitely growing in popularity among the youth. One major pro that baseball has over other forms of entertainment is the accessibility to the average user. There are hundreds of “random” statistics that represent distinct combinations of attributes, but most of them are quite simple to understand and apply. 
+	In addition, the Houston Astros made the headlines a few years ago for cheating via illegally sign stealing using technology. Baseball has always had an issue with stealing signs for pitches, but I want to focus on pitch sequencing, specifically in high pressure situations like playoff games. The best pitchers not only have the best “stuff”, but are also the most unpredictable; the batters have no idea what’s coming which always puts them behind, or they do know what’s coming and simply cannot get good contact on the ball. 
+	The end user for my project would definitely be a playoff caliber team such as the Astros, Dodgers, or Yankees. The use case of the project would be to help the specific team using the project to identify a pitcher’s likely pitches in an at-bat given the previous pitches thrown, the current inning and scoreline, among other factors. In addition, I would like to analyze the catchers for a given team, since they actually call the pitches. Obviously, the pitcher has some influence, but generally the catcher is the one controlling the sequencing. 
+	To obtain this, the user would load the data into python, Tableau or another programming tool. The user would then be able to enter the current attributes for a specific pitch in a game, and produce visualizations showing the likelihood of a specific pitch to be thrown.</p>
+ 
     </div>
 
-    <div>
+    <div id="background">
         <h2>Background</h2>
-        TODO: Add link to report, demo video, link to data etc. here  
+        TODO: Add link to report, demo video, link to data etc. here 
+        <div id="data">
+            <h3>Data</h3>
+            <p>Our data tool will visualize the likelihood of pitch types and locations for a specific scenario in a Major League Baseball game. To do so, we are using Statcast data which uses high-resolution cameras and radar technology to precisely measure 
+                the movements of players and the ball in game. The data has been provided by Baseball Savant, a site dedicated to baseball analytics and statistics research. The objective statistical nature of the data protects itself from any apparent biases 
+                between player performances. As for the ethics considering the collection of this data, the contracts of MLB players allows for Major League Baseball to disclose any performance metrics that can be observed on the field. Since players are put on display for fans, 
+                their statistics are generally public and the MLB reserves the rights to publish them.</p>
+                
+                <p>Through this tool, our end user can specify a pitcher, count, inning, batter, and previous pitch type to personalize the situation. This exposes teams, especially their hitters to more useful analytics to predict what pitch this particular pitcher in this particular situation might throw. Baseball, being such a matchup based sport, lends itself heavily to analyses covering many different scenarios compared to other sports.</p>
+            <a href="https://www.kaggle.com/datasets/s903124/mlb-statcast-data">Datasource</a>
+        </div>
+        
     </div>
 
     <div>
@@ -30,7 +45,12 @@
 
     <div>
         <h2>Acknowledgements</h2>
-        TODO: Cite resources used here   
+        TODO: List acknowledgements here
+        <ul>
+            <li>
+                <a href="https://baseballsavant.mlb.com/about">What is Statcast?</a>
+            </li>
+        </ul>
     </div>
 
 
