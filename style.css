@@ -5,3 +5,9 @@ body {
 h1 {
     text-align: center;
 }
+
+.centered {
+    text-align: center;
+    margin-right: 300px;
+    margin-left: 300px;
+}
