@@ -1,4 +1,68 @@
+/*
+d3.csv("data/first5k.csv", function(data) {
+    // Print the first 10 rows of the data to the console
+    for (var i = 0; i < 10; i++) {
+        console.log(data[i]);
+    }
+});
+*/
 
+// first vis
+function build_type_vis(pitch_data) {
+    // define height, width and margin
+    const h = 400;
+    const w = 400;
+    const margin = 50;
+    const radius = Math.min(w, h) / 2;
+
+    const type_frame = d3.select("#type_vis")
+        .append("svg")
+        .attr("height", h)
+        .attr("width", w)
+        .append("g")
+        .attr("transform", "translate(" + margin + "," + margin + ")");
+
+    d3.csv(pitch_data).then((data) => {
+        const counts = {};
+        data.forEach(d => {
+        if (!counts[d.pitch_count]) {
+            counts[d.pitch_count] = 0;
+        }
+        counts[d.pitch_count]++;
+
+        const countsArray = Object.keys(counts).map(key => {
+            return { label: key, value: counts[key] };
+        });
+
+        const pie = d3.pie()
+            .value(d => d.value)
+            .sort(null);
+
+        const slices = type_frame.selectAll('slice')
+        .data(pie(countsArray))
+        .enter()
+        .append('g')
+        .attr('class', 'slice');
+
+        slices.append('path')
+        .attr('d', d3.arc()
+            .innerRadius(0)
+            .outerRadius(radius)
+        )
+        .attr('fill', d => d3.schemeCategory10[d.index]);
+
+        slices.append('text')
+            .text(d => `${d.data.label}: ${d.data.value}`)
+            .attr('transform', d => `translate(${d3.arc().centroid(d)})`)
+            .attr('text-anchor', 'middle');
+    });
+
+
+});
+}
+build_type_vis("data/2021_statcast.csv")
+
+// second vis--needs work
 function build_location_vis() {
 
     var margin = 50,
@@ -12,7 +76,7 @@ function build_location_vis() {
         .append("g")
             .attr("transform", "translate("+50+","+50+")");
 
-    d3.csv("2021_statcast.csv").then((data) => {
+    d3.csv("data/2021_statcast.csv").then((data) => {
 
         var xScale = d3.scaleLinear()
             .range([0,width])
