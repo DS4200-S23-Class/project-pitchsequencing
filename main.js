@@ -29,7 +29,7 @@ function build_location_vis(pitch_data) {
 
         var xScale = d3.scaleLinear()
             .range([0,width])
-            .domain([-8, 8]);
+            .domain([-4,4]);
 
         svg.append("g")
             .attr("transform", "translate(0,"+height+")")
@@ -37,7 +37,7 @@ function build_location_vis(pitch_data) {
 
         var yScale = d3.scaleLinear()
             .range([height,0])
-            .domain([-8,8]);
+            .domain([-2, 6]);
 
         svg.append("g")
             .call(d3.axisLeft(yScale));
@@ -49,8 +49,8 @@ function build_location_vis(pitch_data) {
             .append("circle")
                 .attr("cx", function(d){return xScale(d.plate_x);})
                 .attr("cy", function(d){return yScale(d.plate_z);})
-                .attr("r", 1.5)
-                .attr("opacity", .05)
+                .attr("r", 2)
+                .attr("opacity", .5)
                 .attr("fill", "#FF2E2E")
         svg.append("g")
                 .append("text")
