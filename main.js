@@ -1,11 +1,3 @@
-/*d3.csv("data/first5k.csv", function(data) {
-    // Print the first 10 rows of the data to the console
-    for (var i = 0; i < 10; i++) {
-        console.log(data[i]);
-    }
-});
-*/
-
 // linking between vizs with data filtering will be implemented in final design
 // VISUALIZATIONS ONLY APPEAR IN LOCALHOST (likely do to massive csv)
 
@@ -78,15 +70,16 @@ function build_type_vis(pitch_data) {
         .attr("height", h)
         .attr("width", w)
         .append("g")
-        .attr("transform", "translate(" + margin + "," + margin + ")");
+        .attr("transform", "translate(" + h / 2 + "," + w / 2 + ")");
 
     d3.csv(pitch_data).then((data) => {
         const counts = {};
         data.forEach(d => {
-        if (!counts[d.pitch_count]) {
-            counts[d.pitch_count] = 0;
-        }
-        counts[d.pitch_count]++;
+        if (!counts[d.pitch_type]) {
+            counts[d.pitch_type] = 0;
+            };
+        counts[d.pitch_type]++;
+        });
 
         const countsArray = Object.keys(counts).map(key => {
             return { label: key, value: counts[key] };
@@ -97,25 +90,28 @@ function build_type_vis(pitch_data) {
             .sort(null);
 
         const slices = type_frame.selectAll('slice')
-        .data(pie(countsArray))
-        .enter()
-        .append('g')
-        .attr('class', 'slice');
+            .data(pie(countsArray))
+            .enter()
+            .append('g')
+            .attr('class', 'slice');
 
         slices.append('path')
-        .attr('d', d3.arc()
-            .innerRadius(0)
-            .outerRadius(radius)
-        )
-        .attr('fill', d => d3.schemeCategory10[d.index]);
+            .attr('d', d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius)
+            )
+            .attr('fill', d => d3.schemeCategory10[d.index]);
 
-        slices.append('text')
-            .text(d => `${d.data.label}: ${d.data.value}`)
-            .attr('transform', d => `translate(${d3.arc().centroid(d)})`)
-            .attr('text-anchor', 'middle');
+        slices.append("text")
+          .attr("transform", function(d){
+                  d.innerRadius = 0;
+                  d.outerRadius = radius;
+                  return "translate(" + d3.arc().centroid(d) + ")";
+            })
+                .attr("text-anchor", "middle")
+                .text(d => `${d.data.label}: ${d.data.value}`);
+
     });
-
-
-});
 }
-//build_type_vis("data/2021_statcast.csv")
+
+build_type_vis("data/first5k.csv");
