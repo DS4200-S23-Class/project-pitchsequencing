@@ -21,10 +21,10 @@ function build_location_vis(pitch_data) {
     d3.csv(pitch_data).then((data) => {
 
         // potential color mapping for location_vis (not working)
-        //const COLOR = d3
-            //.scaleOrdinal()
-            //.domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
-            //.range(d => d3.schemeCategory10[d.pitch_type]);
+        // const COLOR = d3
+            // .scaleOrdinal()
+            // .domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
+            // .range(d => d3.schemeCategory10[d.pitch_type]);
 
         const xScale = d3.scaleLinear()
             .range([0,width])
@@ -37,7 +37,7 @@ function build_location_vis(pitch_data) {
         LOC_FRAME.append("text")
         .attr("transform", "translate(" + (width/2) + "," + (height + margin - 10) + ")")
         .style("text-anchor", "middle")
-        .text("Horizontal Location (inches)");
+        .text("Horizontal Location (feet)");
 
         const yScale = d3.scaleLinear()
             .range([height,0])
@@ -45,17 +45,29 @@ function build_location_vis(pitch_data) {
 
         LOC_FRAME.append("g")
             .call(d3.axisLeft(yScale));
-
+        
         LOC_FRAME.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - margin)
         .attr("x", 0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Vertical Location (inches)");
+        .text("Vertical Location (feet)");
 
-        LOC_FRAME.append("g")
-            .selectAll("dot")
+        // append lines for strike zone boxes
+        // LOC_FRAME.append("g")
+            // .selectAll("dot")
+            // .enter()
+            // .append("line")
+                // .attr("class", "k-zone")
+                // .attr("x1", function(d) {return xScale(-.708)})
+                // .attr("x2", function(d) {return xScale(-.708)})
+                // .attr("y1", function(d) {return yScale(0)})
+                // .attr("y2", function(d) {return yScale(4)})
+                // .attr("stroke", "black")
+
+
+        LOC_FRAME.selectAll("dot")
             .data(data)
             .enter()
             .append("circle")
@@ -98,7 +110,7 @@ function build_location_vis(pitch_data) {
         function handleMouseleave(event, d) {
           // on mouseleave, make transparent again
           tooltip.style("opacity", 0);
-          d3.select(this).attr("fill", "#FF2E2E");
+          d3.select(this).attr("fill", "black");
         }
 
         // Add event listeners
@@ -150,23 +162,39 @@ function build_type_vis(pitch_data) {
             .append('g')
             .attr('class', 'slice')
 
-            // Just put tooltip on location_vis for now
+        const tooltip = d3.select("#type_vis")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
-           // .on("mouseover", function(d) {
-                // Show tooltip
-              //  tooltip.transition()
-               //     .duration(200)
-               //     .style("opacity", 0.9);
-              //  tooltip.html(`${d.data.label}: ${d.data.value}`) // needs work not sure whats wrong
-               //     .style("left", (d3.event.pageX) + "px")
-               //     .style("top", (d3.event.pageY - 28) + "px");
-          //  })
-           // .on("mouseout", function(d) {
-                // Hide tooltip
-            //    tooltip.transition()
-            //        .duration(500)
-            //        .style("opacity", 0);
-           // });
+         // Define event handler functions for tooltips
+        function handleMouseover(event, d) {
+          // on mouseover, make opaque
+          tooltip.style("opacity", 1);
+          d3.select(this).attr("opacity", .9)
+          d3.select(this).attr("fill", "yellow");
+        }
+
+        function handleMousemove(event, d) {
+          // position the tooltip and fill in information
+          tooltip.html("Pitch Type: " + d.pitch_type + "<br>x: " + d.plate_x + "<br>z: " + d.plate_z)
+            .style("left", event.pageX + 10 + "px") //add offset
+            // from mouse
+            .style("top", event.pageY - 50 + "px");
+        }
+
+        function handleMouseleave(event, d) {
+          // on mouseleave, make transparent again
+          tooltip.style("opacity", 0);
+          d3.select(this).attr("fill", "black");
+        }
+
+        // Add event listeners
+        TYPE_FRAME.selectAll(".point")
+          .on("mouseover", handleMouseover) //add event listeners
+          .on("mousemove", handleMousemove)
+          .on("mouseleave", handleMouseleave);
+    });
 
         slices.append('path')
             .attr('d', d3.arc()
@@ -183,7 +211,7 @@ function build_type_vis(pitch_data) {
             })
                 .attr("text-anchor", "middle")
                 .text(d => `${d.data.label}: ${d.data.value}`);
-    });
-}
+    };
+
 
 build_type_vis("data/first5k.csv");
