@@ -27,12 +27,27 @@ function build_location_vis(pitch_data) {
             .attr("transform", "translate(0,"+height+")")
             .call(d3.axisBottom(xScale));
 
+        svg.append("text")
+        .attr("transform", "translate(" + (width/2) + "," + (height + margin - 10) + ")")
+        .style("text-anchor", "middle")
+        .text("Horizontal Location (feet)");
+
         var yScale = d3.scaleLinear()
             .range([height,0])
             .domain([-2, 6]);
 
         svg.append("g")
             .call(d3.axisLeft(yScale));
+
+        svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Vertical Location (feet)");
+
+
 
         svg.append("g")
             .selectAll("dot")
@@ -72,7 +87,13 @@ function build_type_vis(pitch_data) {
         .append("g")
         .attr("transform", "translate(" + h / 2 + "," + w / 2 + ")");
 
-    d3.csv(pitch_data).then((data) => {
+        // started working on tool-tip could not get it functional
+        const tooltip = d3.select("#type_vis")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+    
+        d3.csv(pitch_data).then((data) => {
         const counts = {};
         data.forEach(d => {
         if (!counts[d.pitch_type]) {
@@ -88,12 +109,27 @@ function build_type_vis(pitch_data) {
         const pie = d3.pie()
             .value(d => d.value)
             .sort(null);
-
+        
         const slices = type_frame.selectAll('slice')
             .data(pie(countsArray))
             .enter()
             .append('g')
-            .attr('class', 'slice');
+            .attr('class', 'slice')
+            .on("mouseover", function(d) {
+                // Show tooltip
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+                tooltip.html(`${d.data.label}: ${d.data.value}`) // needs work not sure whats wrong
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                // Hide tooltip
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
 
         slices.append('path')
             .attr('d', d3.arc()
@@ -110,7 +146,6 @@ function build_type_vis(pitch_data) {
             })
                 .attr("text-anchor", "middle")
                 .text(d => `${d.data.label}: ${d.data.value}`);
-
     });
 }
 
