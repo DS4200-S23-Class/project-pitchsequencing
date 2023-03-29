@@ -148,6 +148,8 @@ function build_type_vis(pitch_data) {
         counts[d.pitch_type]++;
         });
 
+        console.log(counts)
+
         const countsArray = Object.keys(counts).map(key => {
             return { label: key, value: counts[key] };
         });
@@ -162,6 +164,14 @@ function build_type_vis(pitch_data) {
             .append('g')
             .attr('class', 'slice')
 
+        const PITCH_NAME = d3
+            .scaleOrdinal()
+            .domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
+            .range(["Fastball", "Slider", "Curveball", "Sinker", "Changeup", "Cut Fastball", "Knuckle Curve", "Sinking Fastball"]);
+
+        console.log(PITCH_NAME("SL"))
+
+
         const tooltip = d3.select("#type_vis")
         .append("div")
         .attr("class", "tooltip")
@@ -171,13 +181,12 @@ function build_type_vis(pitch_data) {
         function handleMouseover(event, d) {
           // on mouseover, make opaque
           tooltip.style("opacity", 1);
-          d3.select(this).attr("opacity", .9)
-          d3.select(this).attr("fill", "yellow");
+          d3.select(this).attr("border", "black");
         }
 
         function handleMousemove(event, d) {
           // position the tooltip and fill in information
-          tooltip.html("Pitch Type: " + d.pitch_type + "<br>x: " + d.plate_x + "<br>z: " + d.plate_z)
+          tooltip.html(`Pitch Name: ${PITCH_NAME(d.data.label)}<br>Count: ${d.data.value}`)
             .style("left", event.pageX + 10 + "px") //add offset
             // from mouse
             .style("top", event.pageY - 50 + "px");
@@ -190,11 +199,10 @@ function build_type_vis(pitch_data) {
         }
 
         // Add event listeners
-        TYPE_FRAME.selectAll(".point")
+        TYPE_FRAME.selectAll(".slice")
           .on("mouseover", handleMouseover) //add event listeners
           .on("mousemove", handleMousemove)
           .on("mouseleave", handleMouseleave);
-    });
 
         slices.append('path')
             .attr('d', d3.arc()
@@ -210,8 +218,8 @@ function build_type_vis(pitch_data) {
                   return "translate(" + d3.arc().centroid(d) + ")";
             })
                 .attr("text-anchor", "middle")
-                .text(d => `${d.data.label}: ${d.data.value}`);
-    };
+                .text(d => `${d.data.label}`);
+    });
 
-
+    }
 build_type_vis("data/first5k.csv");
