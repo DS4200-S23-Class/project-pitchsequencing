@@ -4,6 +4,9 @@
 // vis 1
 // we changed vis 1 to show the placements of pitches in similar situations as the
 // area vs likelihood graph would likely have many blank areas with specific filtering
+
+// HERE make dropdowns to change pitch_data and filter for user inputs such as pitch count, batter handedness, inning, etc.
+
 function build_location_vis(pitch_data) {
 
     const margin = 50;
@@ -66,6 +69,7 @@ function build_location_vis(pitch_data) {
                 // .attr("y2", function(d) {return yScale(4)})
                 // .attr("stroke", "black")
 
+        // plot the points for the location visualization
         LOC_FRAME.selectAll("dot")
             .data(data)
             .enter()
@@ -77,6 +81,7 @@ function build_location_vis(pitch_data) {
                 .attr("class", "point")
                 .attr("fill", function(d) {return COLOR(d.pitch_type)}); // this is where color function would go if working
 
+        // title for location visualization
         LOC_FRAME.append("g")
                 .append("text")
                 .attr("x", (width/2))
@@ -94,6 +99,7 @@ function build_location_vis(pitch_data) {
         function handleMouseover(event, d) {
           // on mouseover, make opaque
           tooltip.style("opacity", 1);
+          // when hovering over a point make more opaque and highlight
           d3.select(this).attr("opacity", .9)
           d3.select(this).attr("fill", "yellow");
         }
@@ -109,6 +115,7 @@ function build_location_vis(pitch_data) {
         function handleMouseleave(event, d) {
           // on mouseleave, make transparent again
           tooltip.style("opacity", 0);
+          // when you have gone over a point change it to black
           d3.select(this).attr("fill", "black");
         }
 
