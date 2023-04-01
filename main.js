@@ -21,10 +21,10 @@ function build_location_vis(pitch_data) {
     d3.csv(pitch_data).then((data) => {
 
         // potential color mapping for location_vis (not working)
-        // const COLOR = d3
-            // .scaleOrdinal()
-            // .domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
-            // .range(d => d3.schemeCategory10[d.pitch_type]);
+        const COLOR = d3
+            .scaleOrdinal()
+            .domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
+            .range(["blue", "orange", "green", "red", "purple", "brown", "pink", "gray"]);
 
         const xScale = d3.scaleLinear()
             .range([0,width])
@@ -66,7 +66,6 @@ function build_location_vis(pitch_data) {
                 // .attr("y2", function(d) {return yScale(4)})
                 // .attr("stroke", "black")
 
-
         LOC_FRAME.selectAll("dot")
             .data(data)
             .enter()
@@ -76,7 +75,7 @@ function build_location_vis(pitch_data) {
                 .attr("r", 2)
                 .attr("opacity", .5)
                 .attr("class", "point")
-                .attr("fill", "#FF2E2E") // this is where color function would go if working
+                .attr("fill", function(d) {return COLOR(d.pitch_type)}); // this is where color function would go if working
 
         LOC_FRAME.append("g")
                 .append("text")
@@ -118,7 +117,12 @@ function build_location_vis(pitch_data) {
           .on("mouseover", handleMouseover) //add event listeners
           .on("mousemove", handleMousemove)
           .on("mouseleave", handleMouseleave);
+
+        console.log('colorFF' + COLOR('FF'));
+        console.log('colorSL' + COLOR('SL'));
     });
+
+    
 }
 // used first 5000 rows as sample data
 build_location_vis("data/first5k.csv")
@@ -222,4 +226,5 @@ function build_type_vis(pitch_data) {
     });
 
     }
+
 build_type_vis("data/first5k.csv");
