@@ -5,8 +5,6 @@
 // we changed vis 1 to show the placements of pitches in similar situations as the
 // area vs likelihood graph would likely have many blank areas with specific filtering
 
-// HERE make dropdowns to change pitch_data and filter for user inputs such as pitch count, batter handedness, inning, etc.
-
 function build_location_vis(pitch_data) {
 
     const margin = 50;
@@ -20,10 +18,11 @@ function build_location_vis(pitch_data) {
             .attr("class", "frame")
         .append("g")
             .attr("transform", "translate(" + margin + "," + margin + ")");
+        
 
     d3.csv(pitch_data).then((data) => {
 
-        // potential color mapping for location_vis (not working)
+        // color mapping for location_vis
         const COLOR = d3
             .scaleOrdinal()
             .domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
@@ -57,18 +56,6 @@ function build_location_vis(pitch_data) {
         .style("text-anchor", "middle")
         .text("Vertical Location (feet)");
 
-        // append lines for strike zone boxes
-        // LOC_FRAME.append("g")
-            // .selectAll("dot")
-            // .enter()
-            // .append("line")
-                // .attr("class", "k-zone")
-                // .attr("x1", function(d) {return xScale(-.708)})
-                // .attr("x2", function(d) {return xScale(-.708)})
-                // .attr("y1", function(d) {return yScale(0)})
-                // .attr("y2", function(d) {return yScale(4)})
-                // .attr("stroke", "black")
-
         // plot the points for the location visualization
         LOC_FRAME.selectAll("dot")
             .data(data)
@@ -89,6 +76,91 @@ function build_location_vis(pitch_data) {
                 .attr("text-anchor", "middle")
                 .style("font-size", "20px")
                 .text("Most probable pitch location");
+        
+        let brushExtent;
+
+        function handleBrush(e) {
+            brushExtent = e.selection;
+            console.log(`Brushed ${brushExtent[0][0]} , ${brushExtent[1][0]} , ${brushExtent[0][1]} , ${brushExtent[1][1]}`);
+            update();
+        }
+        console.log(`(0, 0) : ${xScale(0)}, ${yScale(0)}`);
+
+        function typeInBrush(type) {
+            for (let i = 0; i < data.length; i++) {
+                if (isInBrushExtent(data[i]) && type === PITCH_NAME(data[i].pitch_type)) {
+                    return true;
+                }
+            }
+            return false;
+            }
+              
+        function isInBrushExtent(d) {
+            const isInArea = (
+            brushExtent &&
+            xScale(d.plate_x) >= brushExtent[0][0] - margin &&
+            xScale(d.plate_x) <= brushExtent[1][0] - margin &&
+            yScale(d.plate_z) >= brushExtent[0][1] - margin &&
+            yScale(d.plate_z) <= brushExtent[1][1] - margin);
+
+            return isInArea;
+                }
+        /*
+        const counts = {};
+        data.forEach(d => {
+        if (!counts[d.pitch_type]) {
+            counts[d.pitch_type] = 0;
+            };
+        counts[d.pitch_type]++;
+        });
+        
+        console.log(counts)
+        
+        const countsArray = Object.keys(counts).map(key => {
+            return { label: key, value: counts[key] };
+        });
+        */
+       
+        
+        const counts = {};
+        data.forEach(d => {
+        if (!counts[d.pitch_type]) {
+            counts[d.pitch_type] = 0;
+            };
+        counts[d.pitch_type]++;
+        });
+
+        console.log(counts)
+
+        const countsArray = Object.keys(counts).map(key => {
+            return { label: key, value: counts[key] };
+        });
+
+        const pie = d3.pie()
+            .value(d => d.value)
+            .sort(null);
+
+        function update() {
+            d3.select("#type_vis")
+                .selectAll("slice")
+                .data(pie(countsArray))
+                .attr("class", (d) => {
+                    return typeInBrush(d) ? "selected" : "unselected";
+                  });  
+        }
+
+        update();
+
+        LOC_FRAME.append("g").attr("id", "brush");
+        LOC_FRAME.select("#brush").call(
+          d3
+            .brush()
+            .extent([
+              [0, 0],
+              [400, 400],
+            ])
+            .on("start brush", handleBrush)
+        );
 
         const tooltip = d3.select("#location_vis")
         .append("div")
@@ -125,16 +197,14 @@ function build_location_vis(pitch_data) {
           .on("mousemove", handleMousemove)
           .on("mouseleave", handleMouseleave);
 
-        console.log('colorFF' + COLOR('FF'));
-        console.log('colorSL' + COLOR('SL'));
+        
     });
-
     
 }
 // used first 5000 rows as sample data
-build_location_vis("data/first5k.csv")
+build_location_vis("data/first5k.csv");
 
-// vis 2 (needs work)
+
 function build_type_vis(pitch_data) {
     // define height, width and margin
     const h = 400;
@@ -179,8 +249,6 @@ function build_type_vis(pitch_data) {
             .scaleOrdinal()
             .domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
             .range(["Fastball", "Slider", "Curveball", "Sinker", "Changeup", "Cut Fastball", "Knuckle Curve", "Sinking Fastball"]);
-
-        console.log(PITCH_NAME("SL"))
 
 
         const tooltip = d3.select("#type_vis")

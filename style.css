@@ -32,9 +32,19 @@ h1 {
 }
 
 #left {
-    width: 50%;
+    width: 60%;
 }
 
 #right {
-    width: 50%;
+    width: 40%;
+}
+
+.selected {
+    border: yellow;
+    border-width: 15px;
+}
+
+.unselected {
+    border: black;
+    border-width: 0;
 }
