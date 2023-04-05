@@ -50,8 +50,25 @@
 
     <h2 class="centered">Visualization</h2>
     <div id="columns">
+       
         <div id="left">
             <div id="location_vis"> </div>
+            <div>
+                <form id="Scenario">
+                    <label for="Inning">Inning: </label>
+                    <input type="number" id="inning" name="inning" min="1" max="9"><br>
+                    <label for="Strikes">Strikes: </label>
+                    <input type="number" id="strikes" name="strikes" min="0" max="2"><br>
+                    <label for="Balls">Balls: </label>
+                    <input type="number" id="balls" name="balls" min="0" max="3"><br>
+                    <label for="phandedness">Pitcher Handedness:</label>
+                    <select name="phandedness" id="phandedness">
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    </select>
+                    <input  id="submit-btn" type="button" value="Update">
+                  </form>
+            </div>
         </div>
         <div id="right">
             <div id="type_vis"></div>

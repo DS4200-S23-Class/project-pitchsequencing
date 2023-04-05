@@ -7,6 +7,8 @@
 
 // HERE make dropdowns to change pitch_data and filter for user inputs such as pitch count, batter handedness, inning, etc.
 
+//implement filter based on on the inputs given on the webpage - 
+
 function build_location_vis(pitch_data) {
 
     const margin = 50;
@@ -182,7 +184,7 @@ function build_type_vis(pitch_data) {
 
         console.log(PITCH_NAME("SL"))
 
-
+        
         const tooltip = d3.select("#type_vis")
         .append("div")
         .attr("class", "tooltip")
