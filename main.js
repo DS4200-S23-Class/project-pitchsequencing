@@ -9,6 +9,40 @@
 
 //implement filter based on on the inputs given on the webpage - 
 
+d3.csv("data/first5k.csv").then((data) => {
+    function subset() {
+        let inning = document.getElementById("inning");
+        let strikes = document.getElementById("strikes");
+        let balls = document.getElementById("balls");
+        let p_hand = document.getElementById("phandedness");
+
+        // get all values input
+        inning = inning.value;
+        strikes = strikes.value;
+        balls = balls.value;
+        p_hand = phandedness.value;
+
+        
+        function fitsDesc(selection) {
+            return (selection.inning === inning) && (selection.strikes === strikes) && (selection.balls === balls) && (selection.p_throws === p_hand);
+        }
+    
+        // access data
+        
+        sub_data = data.filter(fitsDesc);
+        console.log(`SubData, ${sub_data}`)
+        d3.select('#location_vis').selectAll("svg").remove();
+        d3.select('#type_vis').selectAll("svg").remove();
+        
+        build_location_vis(sub_data);
+        build_type_vis(sub_data);
+    
+    
+    }
+    document.getElementById("submit-btn")
+        .addEventListener("click", subset)
+});
+
 function build_location_vis(pitch_data) {
 
     const margin = 50;
@@ -23,8 +57,7 @@ function build_location_vis(pitch_data) {
         .append("g")
             .attr("transform", "translate(" + margin + "," + margin + ")");
 
-    d3.csv(pitch_data).then((data) => {
-
+    
         // potential color mapping for location_vis (not working)
         const COLOR = d3
             .scaleOrdinal()
@@ -73,7 +106,7 @@ function build_location_vis(pitch_data) {
 
         // plot the points for the location visualization
         LOC_FRAME.selectAll("dot")
-            .data(data)
+            .data(pitch_data)
             .enter()
             .append("circle")
                 .attr("cx", function(d){return xScale(d.plate_x);})
@@ -128,15 +161,10 @@ function build_location_vis(pitch_data) {
           .on("mouseleave", handleMouseleave);
 
         console.log('colorFF' + COLOR('FF'));
-        console.log('colorSL' + COLOR('SL'));
-    });
-
+        console.log('colorSL' + COLOR('SL'));  
     
 }
-// used first 5000 rows as sample data
-build_location_vis("data/first5k.csv")
 
-// vis 2 (needs work)
 function build_type_vis(pitch_data) {
     // define height, width and margin
     const h = 400;
@@ -151,10 +179,13 @@ function build_type_vis(pitch_data) {
         .append("g")
         .attr("transform", "translate(" + h / 2 + "," + w / 2 + ")");
 
-    
-        d3.csv(pitch_data).then((data) => {
+        const COLOR = d3
+        .scaleOrdinal()
+        .domain(["FF", "SL", "CU", "SI", "CH", "FC", "KC", "FS"])
+        .range(["blue", "orange", "green", "red", "purple", "brown", "pink", "gray"]);
+
         const counts = {};
-        data.forEach(d => {
+        pitch_data.forEach(d => {
         if (!counts[d.pitch_type]) {
             counts[d.pitch_type] = 0;
             };
@@ -222,7 +253,7 @@ function build_type_vis(pitch_data) {
                 .innerRadius(0)
                 .outerRadius(radius)
             )
-            .attr('fill', d => d3.schemeCategory10[d.index]);
+            .attr('fill', function(d) {return COLOR(d.data.label)});
 
         slices.append("text")
           .attr("transform", function(d){
@@ -232,8 +263,15 @@ function build_type_vis(pitch_data) {
             })
                 .attr("text-anchor", "middle")
                 .text(d => `${d.data.label}`);
-    });
+        
 
     }
 
-build_type_vis("data/first5k.csv");
+// initialize the webpage
+const pitch_data = d3.csv("data/first5k.csv").then((data) => {
+    console.log(data)
+    // used first 5000 rows as sample data
+    build_location_vis(data);
+
+    build_type_vis(data);
+});
