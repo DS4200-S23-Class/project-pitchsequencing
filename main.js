@@ -31,6 +31,7 @@ d3.csv("data/first5k.csv").then((data) => {
         
         sub_data = data.filter(fitsDesc);
         console.log(`SubData, ${sub_data}`)
+        // clears previous vis to show subset data only now
         d3.select('#location_vis').selectAll("svg").remove();
         d3.select('#type_vis').selectAll("svg").remove();
         
@@ -43,6 +44,7 @@ d3.csv("data/first5k.csv").then((data) => {
         .addEventListener("click", subset)
 });
 
+// pitch_data that is read in is the array of data points itself
 function build_location_vis(pitch_data) {
 
     const margin = 50;
@@ -160,11 +162,10 @@ function build_location_vis(pitch_data) {
           .on("mousemove", handleMousemove)
           .on("mouseleave", handleMouseleave);
 
-        console.log('colorFF' + COLOR('FF'));
-        console.log('colorSL' + COLOR('SL'));  
     
 }
 
+// pitch_data that is read in is the array of data points itself
 function build_type_vis(pitch_data) {
     // define height, width and margin
     const h = 400;
@@ -242,11 +243,23 @@ function build_type_vis(pitch_data) {
           d3.select(this).attr("fill", "black");
         }
 
+        function handleClick(event, d) {
+            // on click of slice, show only that pitch type in location vis
+            function byType(selection) {
+                return (selection.pitch_type === d.data.label);
+            }
+            sub_pitch_data = pitch_data.filter(byType);
+            console.log(`SubPitchData: ${sub_pitch_data}`)
+            d3.select("#location_vis").selectAll("svg").remove();
+            build_location_vis(sub_pitch_data)
+        }
+
         // Add event listeners
         TYPE_FRAME.selectAll(".slice")
           .on("mouseover", handleMouseover) //add event listeners
           .on("mousemove", handleMousemove)
-          .on("mouseleave", handleMouseleave);
+          .on("mouseleave", handleMouseleave)
+          .on("click", handleClick);
 
         slices.append('path')
             .attr('d', d3.arc()
