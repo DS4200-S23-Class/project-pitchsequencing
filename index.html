@@ -53,6 +53,11 @@
        
         <div id="left">
             <div id="location_vis"> </div>
+        </div>
+        <div id="right">
+            <div id="type_vis"></div>
+            <p>Click on a slice to only show pitches of that type in location graph.</p>
+            <br><br><br>
             <div>
                 <form id="Scenario">
                     <label for="inning">Inning: </label>
@@ -65,14 +70,11 @@
                     <select name="phandedness" id="phandedness">
                     <option value="L">Left</option>
                     <option value="R">Right</option>
-                    </select>
+                    </select><br>
                     <button id="submit-btn" type="button">Filter Data</button>
                   </form>
-                  <p>All fields are required</p>
+                  <p>*All fields are required when filtering</p>
             </div>
-        </div>
-        <div id="right">
-            <div id="type_vis"></div>
         </div>  
     </div>
 

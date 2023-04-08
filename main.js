@@ -48,8 +48,8 @@ d3.csv("data/first5k.csv").then((data) => {
 function build_location_vis(pitch_data) {
 
     const margin = 50;
-    const width = 400;
-    const height = 400;
+    const width = 800;
+    const height = 800;
 
     const LOC_FRAME = d3.select("#location_vis")
         .append("svg")
@@ -113,7 +113,7 @@ function build_location_vis(pitch_data) {
             .append("circle")
                 .attr("cx", function(d){return xScale(d.plate_x);})
                 .attr("cy", function(d){return yScale(d.plate_z);})
-                .attr("r", 2)
+                .attr("r", 3)
                 .attr("opacity", .5)
                 .attr("class", "point")
                 .attr("fill", function(d) {return COLOR(d.pitch_type)}); // this is where color function would go if working
@@ -152,8 +152,10 @@ function build_location_vis(pitch_data) {
         function handleMouseleave(event, d) {
           // on mouseleave, make transparent again
           tooltip.style("opacity", 0);
-          // when you have gone over a point change it to black
-          d3.select(this).attr("fill", "black");
+          // when you have gone over a point change it to original color and give it outline
+          d3.select(this).attr("fill", function(d) {return COLOR(d.pitch_type)});
+          d3.select(this).attr("stroke", "black");
+          d3.select(this).attr("stroke-width", 1);
         }
 
         // Add event listeners
